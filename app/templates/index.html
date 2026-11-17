@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="badge">DIY Internship &bull; Task 1</div>
+    <h1 class="hero-title">Flask Application Setup</h1>
+    <p class="hero-description">
+        A clean, modular starter architecture using the Application Factory pattern, Blueprints, Flask-SQLAlchemy, and Flask-Migrate.
+    </p>
+
+    <div class="status-indicator">
+        <span class="status-dot"></span>
+        <span>App Status: <strong>Online & Ready</strong></span>
+    </div>
+
+    <div class="actions">
+        <a href="{{ url_for('main.health_check') }}" class="btn btn-primary" target="_blank">
+            Test Health Check Endpoint (/health)
+        </a>
+    </div>
+</section>
+
+<section class="features-section">
+    <h2 class="section-title">Core Architecture Features</h2>
+    <div class="grid">
+        <div class="feature-card">
+            <div class="card-icon">🏭</div>
+            <h3>Application Factory Pattern</h3>
+            <p>Configured in <code>app/__init__.py</code> using <code>create_app()</code>. Allows multiple instances and isolated unit testing.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="card-icon">🧩</div>
+            <h3>Flask Blueprints</h3>
+            <p>Modular routing organized inside <code>app/main/</code> to keep application logic decoupled and clean.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="card-icon">🗄️</div>
+            <h3>Flask-SQLAlchemy</h3>
+            <p>Configured with SQLite in <code>config.py</code> and initialized in <code>app/extensions.py</code> without circular imports.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="card-icon">🔄</div>
+            <h3>Flask-Migrate</h3>
+            <p>Alembic-powered database schema migrations for smooth versioning of SQLite tables.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

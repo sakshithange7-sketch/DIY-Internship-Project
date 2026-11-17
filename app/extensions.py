@@ -8,6 +8,7 @@ This decouples extension creation from app creation, avoiding circular imports.
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect
 
 # Database ORM instance
 db = SQLAlchemy()
@@ -17,3 +18,6 @@ migrate = Migrate()
 
 # Authentication and session management instance
 login_manager = LoginManager()
+
+# CSRF protection instance
+csrf = CSRFProtect()

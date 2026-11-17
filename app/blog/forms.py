@@ -4,6 +4,37 @@ from wtforms import StringField, TextAreaField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Length, Optional, ValidationError
 
 
+class CommentForm(FlaskForm):
+    """
+    Form for submitting a comment on a blog post.
+    """
+    body = TextAreaField(
+        'Your Comment',
+        validators=[
+            DataRequired(message='Comment cannot be empty.'),
+            Length(
+                min=2,
+                max=1000,
+                message='Comment must be between 2 and 1000 characters long.'
+            )
+        ],
+        render_kw={
+            'placeholder': 'Share your thoughts...',
+            'rows': 4,
+            'class': 'form-control comment-textarea'
+        }
+    )
+
+    submit = SubmitField('Post Comment', render_kw={'class': 'btn btn-primary'})
+
+    def validate_body(self, field):
+        """Reject comments that are only whitespace."""
+        if field.data and not field.data.strip():
+            raise ValidationError('Comment cannot consist of whitespace only.')
+
+
+
+
 class PostForm(FlaskForm):
     """
     Form for creating and editing blog posts.

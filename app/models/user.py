@@ -20,6 +20,14 @@ class User(UserMixin, db.Model):
     # One-to-Many relationship with Post
     posts = db.relationship('Post', backref='author', lazy='dynamic', cascade='all, delete-orphan')
 
+    # One-to-Many relationship with Comment (cascade delete)
+    comments = db.relationship(
+        'Comment',
+        back_populates='author',
+        cascade='all, delete-orphan',
+        lazy='dynamic'
+    )
+
     @property
     def authored_posts(self):
         """Returns all posts authored by this user, ordered by creation date descending."""

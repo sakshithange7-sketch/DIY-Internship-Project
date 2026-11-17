@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %}
 
 {% block title %}{{ post.title }} - Blog - FlaskStarter{% endblock %}
@@ -16,10 +17,12 @@
 
     <article class="article-card">
         <header class="article-header">
+
             <div class="article-meta-top">
                 <a href="{{ url_for('blog.index', category=post.category.slug) }}" class="category-tag">
                     🏷️ {{ post.category.name }}
                 </a>
+
                 <span class="reading-time">
                     ⏱️ {{ (post.content|striptags|wordcount / 180)|round(0, 'ceil')|int }} min read
                 </span>
@@ -28,11 +31,15 @@
             <h1 class="article-title">{{ post.title }}</h1>
 
             <div class="article-meta-bar">
-                <a href="{{ url_for('main.user_profile', username=post.author.username) }}" class="article-author-card-link" title="View {{ post.author.username }}'s profile">
+                <a href="{{ url_for('main.user_profile', username=post.author.username) }}"
+                   class="article-author-card-link"
+                   title="View {{ post.author.username }}'s profile">
+
                     <div class="article-author-card">
                         <div class="author-avatar-med">
                             {{ post.author.username[0]|upper }}
                         </div>
+
                         <div class="author-text">
                             <span class="author-label">Written by</span>
                             <strong class="author-name">{{ post.author.username }}</strong>
@@ -43,95 +50,304 @@
                 <div class="article-dates">
                     <div class="date-item">
                         <span class="date-label">Published</span>
-                        <time datetime="{{ post.created_at.isoformat() if post.created_at else '' }}">{{ post.created_at.strftime('%B %d, %Y') if post.created_at else 'Recent' }}</time>
+                        <time datetime="{{ post.created_at.isoformat() if post.created_at else '' }}">
+                            {{ post.created_at.strftime('%B %d, %Y') if post.created_at else 'Recent' }}
+                        </time>
                     </div>
+
                     {% if post.updated_at and post.created_at and post.updated_at > post.created_at %}
-                        <div class="date-item">
-                            <span class="date-label">Last Updated</span>
-                            <time datetime="{{ post.updated_at.isoformat() }}">{{ post.updated_at.strftime('%B %d, %Y') }}</time>
-                        </div>
+                    <div class="date-item">
+                        <span class="date-label">Last Updated</span>
+                        <time datetime="{{ post.updated_at.isoformat() }}">
+                            {{ post.updated_at.strftime('%B %d, %Y') }}
+                        </time>
+                    </div>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- Author Controls: Only displayed to the post's author -->
+            <!-- Author Controls -->
             {% if current_user.is_authenticated and current_user.id == post.author.id %}
-                <div class="author-action-panel">
-                    <span class="author-panel-label">Post Controls:</span>
-                    <a href="{{ url_for('blog.edit', slug=post.slug) }}" class="btn btn-sm btn-edit">
-                        ✏️ Edit Post
-                    </a>
-                    <form method="POST"
-                          action="{{ url_for('blog.delete', slug=post.slug) }}"
-                          class="delete-form"
-                          onsubmit="return confirm('Are you sure you want to delete this post? This action cannot be undone.');">
-                        <!-- Include CSRF Token if using Flask-WTF CSRF -->
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token is defined else '' }}">
-                        <button type="submit" class="btn btn-sm btn-delete">
-                            🗑️ Delete Post
-                        </button>
-                    </form>
-                </div>
+            <div class="author-action-panel">
+                <span class="author-panel-label">Post Controls:</span>
+
+                <a href="{{ url_for('blog.edit', slug=post.slug) }}"
+                   class="btn btn-sm btn-edit">
+                    ✏️ Edit Post
+                </a>
+
+                <form method="POST"
+                      action="{{ url_for('blog.delete', slug=post.slug) }}"
+                      class="delete-form"
+                      onsubmit="return confirm('Are you sure you want to delete this post? This action cannot be undone.');">
+
+                    {% if csrf_token is defined %}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-sm btn-delete">
+                        🗑️ Delete Post
+                    </button>
+                </form>
+            </div>
             {% endif %}
+
         </header>
 
-        <!-- Article Content Body -->
+        <!-- Article Content -->
         <div class="article-body ql-editor">
             {{ post.content|safe }}
         </div>
 
-        <!-- Tags Cloud -->
+        <!-- Tags -->
         {% if post.tags %}
-            <div class="article-tags-section">
-                <span class="tags-title">Tags:</span>
-                <div class="tags-list">
-                    {% for tag in post.tags %}
-                        <a href="{{ url_for('blog.index', tag=tag.slug) }}" class="tag-pill">
-                            #{{ tag.name }}
-                        </a>
-                    {% endfor %}
-                </div>
+        <div class="article-tags-section">
+            <span class="tags-title">Tags:</span>
+
+            <div class="tags-list">
+                {% for tag in post.tags %}
+                <a href="{{ url_for('blog.index', tag=tag.slug) }}"
+                   class="tag-pill">
+                    #{{ tag.name }}
+                </a>
+                {% endfor %}
             </div>
+        </div>
         {% endif %}
 
-        <!-- Author Bio Section -->
+        <!-- Author Bio -->
         <div class="article-author-bio-card">
             <div class="bio-avatar">
                 {{ post.author.username[0]|upper }}
             </div>
+
             <div class="bio-details">
                 <span class="bio-badge">About the Author</span>
+
                 <h3 class="bio-username">
                     <a href="{{ url_for('main.user_profile', username=post.author.username) }}">
                         @{{ post.author.username }}
                     </a>
                 </h3>
+
                 <p class="bio-meta">
-                    Member since {{ post.author.created_at.strftime('%B %Y') }} &bull; {{ post.author.posts.count() }} articles authored
+                    Member since {{ post.author.created_at.strftime('%B %Y') }}
+                    &bull; {{ post.author.posts.count() }} articles authored
                 </p>
+
                 <div class="bio-actions">
-                    <a href="{{ url_for('main.user_profile', username=post.author.username) }}" class="btn btn-outline btn-sm">
+                    <a href="{{ url_for('main.user_profile', username=post.author.username) }}"
+                       class="btn btn-outline btn-sm">
                         👤 View Full Profile &amp; Articles &rarr;
                     </a>
                 </div>
             </div>
         </div>
 
+        <!-- COMMENTS SECTION -->
+        <section class="comments-section" id="comments-section">
+
+            <div class="comments-header">
+                <h2 class="comments-title">
+                    💬 Comments
+                    <span class="comments-count-badge">{{ comment_count }}</span>
+                </h2>
+            </div>
+
+            <!-- Comment Submission Form -->
+            {% if current_user.is_authenticated %}
+
+            <div class="comment-form-wrapper">
+                <div class="comment-form-avatar">
+                    {{ current_user.username[0]|upper }}
+                </div>
+
+                <div class="comment-form-body">
+
+                    <p class="comment-form-label">
+                        Commenting as
+                        <strong>{{ current_user.username }}</strong>
+                    </p>
+
+                    <form method="POST"
+                          action="{{ url_for('blog.add_comment', slug=post.slug) }}"
+                          class="comment-form">
+
+                        {{ comment_form.hidden_tag() }}
+
+                        <div class="form-group">
+
+                            {{ comment_form.body(id='comment-body') }}
+
+                            {% if comment_form.body.errors %}
+                            <ul class="form-errors">
+                                {% for error in comment_form.body.errors %}
+                                <li class="form-error-item">{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+
+                            <div class="comment-char-counter">
+                                <span id="char-count">0</span>
+                                / 1000 characters
+                            </div>
+
+                        </div>
+
+                        <div class="comment-form-actions">
+                            {{ comment_form.submit() }}
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            {% else %}
+
+            <div class="comment-login-prompt">
+                <span class="comment-login-icon">🔐</span>
+
+                <p>
+                    <a href="{{ url_for('auth.login', next=url_for('blog.detail', slug=post.slug)) }}">
+                        Log in
+                    </a>
+                    or
+                    <a href="{{ url_for('auth.register') }}">register</a>
+                    to join the discussion and leave a comment.
+                </p>
+            </div>
+
+            {% endif %}
+
+            <!-- Comments List -->
+            <div class="comments-list" id="comments-list">
+
+                {% if comments %}
+
+                    {% for comment in comments %}
+
+                    <div class="comment-card" id="comment-{{ comment.id }}">
+
+                        <div class="comment-avatar">
+                            {{ comment.author.username[0]|upper }}
+                        </div>
+
+                        <div class="comment-content">
+
+                            <div class="comment-meta">
+
+                                <a href="{{ url_for('main.user_profile', username=comment.author.username) }}"
+                                   class="comment-author-name">
+                                    {{ comment.author.username }}
+                                </a>
+
+                                <time class="comment-timestamp"
+                                      datetime="{{ comment.created_at.isoformat() }}"
+                                      title="{{ comment.created_at.strftime('%B %d, %Y at %H:%M UTC') }}">
+                                    {{ comment.created_at.strftime('%b %d, %Y at %H:%M') }}
+                                </time>
+
+                            </div>
+
+                            <div class="comment-body">
+                                {{ comment.body }}
+                            </div>
+
+                            <!-- Delete Comment: Only Comment Owner -->
+                            {% if current_user.is_authenticated and current_user.id == comment.user_id %}
+
+                            <div class="comment-actions">
+
+                                <form method="POST"
+                                      action="{{ url_for('blog.delete_comment', slug=post.slug, comment_id=comment.id) }}"
+                                      class="comment-delete-form"
+                                      onsubmit="return confirm('Are you sure you want to delete this comment?');">
+
+                                    {% if csrf_token is defined %}
+                                    <input type="hidden"
+                                           name="csrf_token"
+                                           value="{{ csrf_token() }}">
+                                    {% endif %}
+
+                                    <button type="submit" class="btn-comment-delete">
+                                        🗑️ Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+                            {% endif %}
+
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="comments-empty-state">
+                        <div class="comments-empty-icon">💭</div>
+
+                        <p class="comments-empty-text">
+                            No comments yet. Be the first to share your thoughts!
+                        </p>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+        <!-- END COMMENTS SECTION -->
+
+        <!-- Footer Navigation -->
         <footer class="article-footer">
+
             <div class="footer-navigation">
-                <a href="{{ url_for('blog.index') }}" class="btn btn-outline">
+
+                <a href="{{ url_for('blog.index') }}"
+                   class="btn btn-outline">
                     &larr; Back to All Posts
                 </a>
-                <a href="{{ url_for('main.index') }}" class="btn btn-outline">
+
+                <a href="{{ url_for('main.index') }}"
+                   class="btn btn-outline">
                     🏠 Home
                 </a>
+
                 {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('blog.create') }}" class="btn btn-primary">
-                        ✍️ Write Another Post
-                    </a>
+                <a href="{{ url_for('blog.create') }}"
+                   class="btn btn-primary">
+                    ✍️ Write Another Post
+                </a>
                 {% endif %}
+
             </div>
+
         </footer>
+
     </article>
 </div>
+
+<!-- Character Counter -->
+<script>
+(function () {
+
+    var textarea = document.getElementById('comment-body');
+    var counter = document.getElementById('char-count');
+
+    if (textarea && counter) {
+
+        function updateCount() {
+            counter.textContent = textarea.value.length;
+        }
+
+        textarea.addEventListener('input', updateCount);
+
+        updateCount();
+    }
+
+})();
+</script>
+
 {% endblock %}

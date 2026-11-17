@@ -89,6 +89,15 @@ class Post(db.Model):
     # Many-to-Many relationship with Tag
     tags = db.relationship('Tag', secondary=post_tags, back_populates='posts', lazy='joined')
 
+    # One-to-Many relationship with Comment (cascade delete)
+    comments = db.relationship(
+        'Comment',
+        back_populates='post',
+        cascade='all, delete-orphan',
+        lazy='dynamic',
+        order_by='Comment.created_at.desc()'
+    )
+
     @property
     def excerpt(self):
         """
@@ -128,3 +137,51 @@ class Post(db.Model):
 
     def __repr__(self):
         return f'<Post {self.title}>'
+
+
+class Comment(db.Model):
+    """
+    Comment model for user comments on blog posts.
+    Linked to Post (parent post) and User (comment author).
+    Deleting a Post cascades to delete all its Comments.
+    Deleting a User cascades to delete all their Comments.
+    """
+    __tablename__ = 'comments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text, nullable=False)
+    created_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+        index=True
+    )
+
+    # Foreign key to the blog post this comment belongs to
+    post_id = db.Column(
+        db.Integer,
+        db.ForeignKey('posts.id', ondelete='CASCADE'),
+        nullable=False,
+        index=True
+    )
+
+    # Foreign key to the user who authored this comment
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete='CASCADE'),
+        nullable=False,
+        index=True
+    )
+
+    # Relationships — using back_populates for explicit two-way declaration
+    post = db.relationship(
+        'Post',
+        back_populates='comments'
+    )
+    author = db.relationship(
+        'User',
+        back_populates='comments'
+    )
+
+    def __repr__(self):
+        return f'<Comment id={self.id} post_id={self.post_id} user_id={self.user_id}>'

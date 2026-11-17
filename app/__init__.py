@@ -1,7 +1,8 @@
+
 import os
 from flask import Flask
 from config import config_by_name
-from app.extensions import db, migrate, login_manager
+from app.extensions import db, migrate, login_manager, csrf
 
 
 def create_app(config_name=None):
@@ -9,6 +10,7 @@ def create_app(config_name=None):
     Application Factory Pattern.
     Creates, configures, and returns a Flask application instance.
     """
+
     if config_name is None:
         config_name = os.environ.get('FLASK_CONFIG', 'default')
 
@@ -17,12 +19,13 @@ def create_app(config_name=None):
     # Load configuration object from config.py
     app.config.from_object(config_by_name[config_name])
 
-    # Ensure the instance directory exists (required for SQLite stored in instance/)
+    # Ensure the instance directory exists
     os.makedirs(app.instance_path, exist_ok=True)
 
-    # Initialize extensions with the current application instance
+    # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db, render_as_batch=True)
+    csrf.init_app(app)
 
     # Configure Flask-Login session management
     login_manager.init_app(app)
@@ -37,15 +40,18 @@ def create_app(config_name=None):
         from app.models.user import User
         return db.session.get(User, int(user_id))
 
-    # Global context processor for pagination URLs preserving query and route arguments
+    # Global context processor for pagination URLs
     @app.context_processor
     def utility_processor():
         def url_for_page(page):
             from flask import request, url_for
+
             args = request.view_args.copy() if request.view_args else {}
             args.update(request.args.to_dict())
             args['page'] = page
+
             return url_for(request.endpoint, **args)
+
         return dict(url_for_page=url_for_page)
 
     # Import models so Flask-Migrate and SQLAlchemy register them
@@ -55,6 +61,7 @@ def create_app(config_name=None):
     from app.main import main_bp
     from app.auth import auth_bp
     from app.blog import blog_bp
+
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(blog_bp)

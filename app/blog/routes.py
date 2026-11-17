@@ -3,8 +3,8 @@ from flask import render_template, redirect, url_for, flash, request, abort
 from flask_login import login_required, current_user
 from app.extensions import db
 from app.blog import blog_bp
-from app.blog.forms import PostForm, CategoryForm
-from app.models.blog import Post, Category, Tag
+from app.blog.forms import PostForm, CategoryForm, CommentForm
+from app.models.blog import Post, Category, Tag, Comment
 
 
 def ensure_default_categories():
@@ -166,9 +166,69 @@ def create():
 def detail(slug):
     """
     View an individual blog post by its unique slug.
+    Shows the post content, existing comments, and a comment submission form
+    for authenticated users.
     """
     post = Post.query.filter_by(slug=slug).first_or_404()
-    return render_template('blog/view.html', post=post)
+    comments = post.comments.order_by(Comment.created_at.asc()).all()
+    comment_form = CommentForm()
+    return render_template(
+        'blog/view.html',
+        post=post,
+        comments=comments,
+        comment_form=comment_form,
+        comment_count=len(comments)
+    )
+
+
+@blog_bp.route('/<slug>/comment', methods=['POST'])
+@login_required
+def add_comment(slug):
+    """
+    Submit a new comment on a blog post.
+    Requires the user to be authenticated.
+    Associates the comment with the current user and the specified post.
+    """
+    post = Post.query.filter_by(slug=slug).first_or_404()
+    form = CommentForm()
+
+    if form.validate_on_submit():
+        comment = Comment(
+            body=form.body.data.strip(),
+            post_id=post.id,
+            user_id=current_user.id
+        )
+        db.session.add(comment)
+        db.session.commit()
+        flash('Your comment has been posted successfully!', 'success')
+    else:
+        # Collect and flash form validation errors
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f'Comment error: {error}', 'danger')
+
+    return redirect(url_for('blog.detail', slug=slug) + '#comments-section')
+
+
+@blog_bp.route('/<slug>/comment/<int:comment_id>/delete', methods=['POST'])
+@login_required
+def delete_comment(slug, comment_id):
+    """
+    Delete a comment from a blog post.
+    Only the comment's author may delete their own comment.
+    """
+    post = Post.query.filter_by(slug=slug).first_or_404()
+    comment = Comment.query.filter_by(id=comment_id, post_id=post.id).first_or_404()
+
+    # Only the comment's author can delete it
+    if comment.user_id != current_user.id:
+        flash('You are not authorized to delete this comment.', 'danger')
+        abort(403)
+
+    db.session.delete(comment)
+    db.session.commit()
+    flash('Comment deleted successfully.', 'info')
+    return redirect(url_for('blog.detail', slug=slug) + '#comments-section')
 
 
 @blog_bp.route('/<slug>/edit', methods=['GET', 'POST'])

@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Blog Posts - FlaskStarter{% endblock %}
+
+{% block content %}
+<div class="blog-header-section">
+    <div class="blog-header-content">
+        <div class="badge">DIY Internship &bull; Task 3 Blog System</div>
+        <h1 class="hero-title">Engineering &amp; Insights Blog</h1>
+        <p class="hero-description">
+            Explore articles, guides, and technical insights published by our community.
+        </p>
+
+        <div class="blog-actions-bar">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('blog.create') }}" class="btn btn-primary">
+                    ✍️ Create New Post
+                </a>
+            {% else %}
+                <a href="{{ url_for('auth.login', next=url_for('blog.create')) }}" class="btn btn-secondary">
+                    🔐 Sign In to Write a Post
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="blog-filters-container">
+    <div class="category-pills">
+        <a href="{{ url_for('blog.index') }}"
+           class="pill {% if not selected_category and not selected_tag %}pill-active{% endif %}">
+            All Posts ({{ posts|length if not selected_category and not selected_tag else 'All' }})
+        </a>
+        {% for cat in categories %}
+            <a href="{{ url_for('blog.index', category=cat.slug) }}"
+               class="pill {% if selected_category and selected_category.slug == cat.slug %}pill-active{% endif %}">
+                🏷️ {{ cat.name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <form method="GET" action="{{ url_for('blog.index') }}" class="blog-search-form">
+        {% if selected_category %}
+            <input type="hidden" name="category" value="{{ selected_category.slug }}">
+        {% endif %}
+        <input type="text"
+               name="q"
+               value="{{ search_query }}"
+               placeholder="Search articles by title or keyword..."
+               class="search-input">
+        <button type="submit" class="btn btn-search">🔍 Search</button>
+        {% if search_query %}
+            <a href="{{ url_for('blog.index', category=selected_category.slug if selected_category else None) }}"
+               class="btn btn-clear">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+{% if selected_tag %}
+    <div class="filter-alert">
+        <span>Filtering by tag: <strong>#{{ selected_tag.name }}</strong></span>
+        <a href="{{ url_for('blog.index') }}" class="filter-remove">&times; Remove Filter</a>
+    </div>
+{% endif %}
+
+{% if posts %}
+    <div class="blog-grid">
+        {% for post in posts %}
+            <article class="post-card">
+                <div class="post-card-header">
+                    <span class="category-tag">{{ post.category.name }}</span>
+                    <span class="post-date">{{ post.created_at.strftime('%b %d, %Y') }}</span>
+                </div>
+
+                <h2 class="post-card-title">
+                    <a href="{{ url_for('blog.detail', slug=post.slug) }}">{{ post.title }}</a>
+                </h2>
+
+                <p class="post-card-excerpt">
+                    {{ post.excerpt }}
+                </p>
+
+                {% if post.tags %}
+                    <div class="post-card-tags">
+                        {% for tag in post.tags %}
+                            <a href="{{ url_for('blog.index', tag=tag.slug) }}" class="tag-badge">
+                                #{{ tag.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="post-card-footer">
+                    <div class="author-info">
+                        <div class="author-avatar-sm">
+                            {{ post.author.username[0]|upper }}
+                        </div>
+                        <div class="author-meta">
+                            <span class="author-name">{{ post.author.username }}</span>
+                            {% if post.updated_at > post.created_at %}
+                                <span class="updated-flag">Updated</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <a href="{{ url_for('blog.detail', slug=post.slug) }}" class="btn-read-more">
+                        Read Article &rarr;
+                    </a>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📝</div>
+        <h3>No blog posts found</h3>
+        <p>
+            {% if search_query or selected_category or selected_tag %}
+                No articles matched your filter criteria. Try clearing the filter or search term.
+            {% else %}
+                Be the first to share your knowledge and publish a blog post!
+            {% endif %}
+        </p>
+        <div class="empty-actions">
+            {% if search_query or selected_category or selected_tag %}
+                <a href="{{ url_for('blog.index') }}" class="btn btn-secondary">View All Posts</a>
+            {% endif %}
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('blog.create') }}" class="btn btn-primary">Create Your First Post</a>
+            {% else %}
+                <a href="{{ url_for('auth.login', next=url_for('blog.create')) }}" class="btn btn-primary">Sign In to Post</a>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

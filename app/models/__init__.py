@@ -5,5 +5,6 @@ Import models here so Alembic / Flask-Migrate and SQLAlchemy detect all tables.
 """
 
 from app.models.user import User
+from app.models.blog import Category, Tag, Post, post_tags
 
-__all__ = ['User']
+__all__ = ['User', 'Category', 'Tag', 'Post', 'post_tags']

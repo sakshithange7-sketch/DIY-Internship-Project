@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Create New Blog Post - FlaskStarter{% endblock %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+
+<div class="form-page-container">
+    <div class="form-page-header">
+        <a href="{{ url_for('blog.index') }}" class="back-link">&larr; Back to all posts</a>
+        <h1 class="page-title">✍️ Create New Blog Post</h1>
+        <p class="page-subtitle">Publish an engaging article with rich content, category tags, and custom metadata.</p>
+    </div>
+
+    <div class="form-card">
+        <form method="POST" action="{{ url_for('blog.create') }}" id="post-form" novalidate>
+            {{ form.hidden_tag() }}
+
+            <!-- Title Field -->
+            <div class="form-group">
+                {{ form.title.label(class="form-label") }}
+                {{ form.title(class="form-input " + ("input-error" if form.title.errors else "")) }}
+                {% if form.title.errors %}
+                    <div class="field-error">
+                        {% for error in form.title.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <small class="form-help">Choose a descriptive and engaging headline (3 to 200 characters).</small>
+                {% endif %}
+            </div>
+
+            <!-- Two-column row for Category & Slug -->
+            <div class="form-row">
+                <!-- Category Select -->
+                <div class="form-group col-half">
+                    {{ form.category_id.label(class="form-label") }}
+                    {{ form.category_id(class="form-input form-select " + ("input-error" if form.category_id.errors else "")) }}
+                    {% if form.category_id.errors %}
+                        <div class="field-error">
+                            {% for error in form.category_id.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <small class="form-help">Select the primary topic category for this post.</small>
+                    {% endif %}
+                </div>
+
+                <!-- Custom Slug Field -->
+                <div class="form-group col-half">
+                    {{ form.slug.label(class="form-label") }}
+                    {{ form.slug(class="form-input " + ("input-error" if form.slug.errors else "")) }}
+                    {% if form.slug.errors %}
+                        <div class="field-error">
+                            {% for error in form.slug.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <small class="form-help">Optional: Leave empty to automatically create a clean URL slug.</small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Tags Field -->
+            <div class="form-group">
+                {{ form.tags.label(class="form-label") }}
+                {{ form.tags(class="form-input " + ("input-error" if form.tags.errors else "")) }}
+                {% if form.tags.errors %}
+                    <div class="field-error">
+                        {% for error in form.tags.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <small class="form-help">Separate multiple tags with commas (e.g. <code>python, flask, web-dev</code>).</small>
+                {% endif %}
+            </div>
+
+            <!-- Rich Text Editor for Content -->
+            <div class="form-group">
+                {{ form.content.label(class="form-label") }}
+                <!-- Actual hidden textarea bound to Flask-WTF -->
+                {{ form.content(id="content-textarea", style="display:none;") }}
+
+                <!-- Rich text editor container -->
+                <div id="editor-wrapper" class="quill-editor-wrapper {% if form.content.errors %}input-error{% endif %}">
+                    <div id="quill-toolbar">
+                        <span class="ql-formats">
+                            <select class="ql-header">
+                                <option value="1">Heading 1</option>
+                                <option value="2">Heading 2</option>
+                                <option value="3">Heading 3</option>
+                                <option selected>Normal</option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-blockquote"></button>
+                            <button class="ql-code-block"></button>
+                            <button class="ql-link"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-clean"></button>
+                        </span>
+                    </div>
+                    <div id="quill-editor" style="min-height: 250px;"></div>
+                </div>
+
+                {% if form.content.errors %}
+                    <div class="field-error">
+                        {% for error in form.content.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <small class="form-help">Write formatted content with headings, lists, quotes, and code blocks.</small>
+                {% endif %}
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                {{ form.submit(class="btn btn-primary btn-large") }}
+                <a href="{{ url_for('blog.index') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const textarea = document.getElementById('content-textarea');
+        const quill = new Quill('#quill-editor', {
+            modules: {
+                toolbar: '#quill-toolbar'
+            },
+            theme: 'snow',
+            placeholder: 'Write your post content here...'
+        });
+
+        // Preload any existing value from the textarea (e.g., if re-rendered after validation failure)
+        if (textarea.value) {
+            quill.root.innerHTML = textarea.value;
+        }
+
+        // Before submitting the form, sync Quill's HTML content to the form textarea
+        const form = document.getElementById('post-form');
+        form.addEventListener('submit', function () {
+            const rawText = quill.getText().trim();
+            if (rawText.length === 0) {
+                textarea.value = '';
+            } else {
+                textarea.value = quill.root.innerHTML;
+            }
+        });
+    });
+</script>
+{% endblock %}

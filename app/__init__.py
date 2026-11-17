@@ -43,7 +43,9 @@ def create_app(config_name=None):
     # Register Blueprints
     from app.main import main_bp
     from app.auth import auth_bp
+    from app.blog import blog_bp
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(blog_bp)
 
     return app

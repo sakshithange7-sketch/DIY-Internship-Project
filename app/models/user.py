@@ -17,6 +17,15 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256), nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
+    # One-to-Many relationship with Post
+    posts = db.relationship('Post', backref='author', lazy='dynamic', cascade='all, delete-orphan')
+
+    @property
+    def authored_posts(self):
+        """Returns all posts authored by this user, ordered by creation date descending."""
+        from app.models.blog import Post
+        return self.posts.order_by(Post.created_at.desc()).all()
+
     def set_password(self, password):
         """Hash and store the user's password."""
         self.password_hash = generate_password_hash(password)

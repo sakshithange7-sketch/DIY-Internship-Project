@@ -141,4 +141,6 @@ def dashboard():
     Protected dashboard route.
     Accessible only to authenticated users via Flask-Login.
     """
-    return render_template('auth/dashboard.html', user=current_user)
+    from app.models.blog import Post
+    user_posts = current_user.posts.order_by(Post.created_at.desc()).all()
+    return render_template('auth/dashboard.html', user=current_user, user_posts=user_posts)

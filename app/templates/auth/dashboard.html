@@ -14,6 +14,7 @@
             <p class="dashboard-subtitle">You are successfully authenticated and your session is active.</p>
         </div>
         <div class="dashboard-actions">
+            <a href="{{ url_for('blog.create') }}" class="btn btn-primary">✍️ New Post</a>
             <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger">Log Out</a>
         </div>
     </div>
@@ -41,19 +42,19 @@
                     <span class="detail-value">{{ user.created_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}</span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Flask-Login is_authenticated</span>
-                    <span class="detail-value text-success">✓ {{ user.is_authenticated }}</span>
+                    <span class="detail-label">Total Articles Authored</span>
+                    <span class="detail-value text-primary"><strong>{{ user.posts.count() }} posts</strong></span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Flask-Login is_active</span>
-                    <span class="detail-value text-success">✓ {{ user.is_active }}</span>
+                    <span class="detail-label">Flask-Login is_authenticated</span>
+                    <span class="detail-value text-success">✓ {{ user.is_authenticated }}</span>
                 </div>
             </div>
         </div>
 
         <div class="info-card">
             <div class="info-card-header">
-                <h3>Security & Session Management</h3>
+                <h3>Security &amp; Session Management</h3>
             </div>
             <div class="info-card-body">
                 <div class="security-item">
@@ -71,14 +72,83 @@
                     </div>
                 </div>
                 <div class="security-item">
-                    <div class="security-icon">🚫</div>
+                    <div class="security-icon">✍️</div>
                     <div>
-                        <strong>Route Protection</strong>
-                        <p>Protected by <code>@login_required</code>. Unauthenticated requests are safely redirected to login.</p>
+                        <strong>Blog CRUD Authorization</strong>
+                        <p>Author-only edit and delete enforcement prevents unauthorized access to your articles.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- My Blog Posts Section -->
+    <section class="user-posts-section">
+        <div class="section-header-flex">
+            <div>
+                <h2 class="section-title-left">📚 My Authored Blog Posts</h2>
+                <p class="section-subtitle">Manage, edit, or delete articles published under your account.</p>
+            </div>
+            <div class="section-actions">
+                <a href="{{ url_for('blog.create') }}" class="btn btn-primary btn-sm">✍️ + Create New Post</a>
+                <a href="{{ url_for('blog.index') }}" class="btn btn-secondary btn-sm">View All Blog Posts</a>
+            </div>
+        </div>
+
+        {% set posts_list = user_posts if user_posts is defined else user.authored_posts %}
+        {% if posts_list %}
+            <div class="user-posts-table-card">
+                <table class="user-posts-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Published</th>
+                            <th>Updated</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in posts_list %}
+                            <tr>
+                                <td class="post-title-cell">
+                                    <a href="{{ url_for('blog.detail', slug=post.slug) }}" class="post-title-link">
+                                        {{ post.title }}
+                                    </a>
+                                    <div class="cell-subtext">/blog/{{ post.slug }}</div>
+                                </td>
+                                <td>
+                                    <span class="category-tag-sm">{{ post.category.name }}</span>
+                                </td>
+                                <td class="date-cell">{{ post.created_at.strftime('%Y-%m-%d') }}</td>
+                                <td class="date-cell">
+                                    {% if post.updated_at > post.created_at %}
+                                        {{ post.updated_at.strftime('%Y-%m-%d') }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td class="actions-cell text-right">
+                                    <a href="{{ url_for('blog.detail', slug=post.slug) }}" class="btn-action-view" title="View">👁️</a>
+                                    <a href="{{ url_for('blog.edit', slug=post.slug) }}" class="btn-action-edit" title="Edit">✏️</a>
+                                    <form method="POST"
+                                          action="{{ url_for('blog.delete', slug=post.slug) }}"
+                                          class="inline-delete-form"
+                                          onsubmit="return confirm('Delete this post permanently?');">
+                                        <button type="submit" class="btn-action-delete" title="Delete">🗑️</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state-mini">
+                <p>You haven't published any blog posts yet.</p>
+                <a href="{{ url_for('blog.create') }}" class="btn btn-primary btn-sm">Write Your First Article</a>
+            </div>
+        {% endif %}
+    </section>
 </div>
 {% endblock %}

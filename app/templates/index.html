@@ -4,30 +4,33 @@
 
 {% block content %}
 <section class="hero-section">
-    <div class="badge">DIY Internship &bull; Task 1 &amp; Task 2</div>
-    <h1 class="hero-title">Flask Application &amp; Authentication</h1>
+    <div class="badge">DIY Internship &bull; Task 1, 2 &amp; 3 Active</div>
+    <h1 class="hero-title">Flask Application, Auth &amp; Blog Platform</h1>
     <p class="hero-description">
-        A modular starter architecture built with the Application Factory pattern, Blueprints, Flask-SQLAlchemy, Flask-Migrate, and secure user authentication via Flask-Login.
+        A production-grade architecture built with the Application Factory pattern, Blueprints, Flask-SQLAlchemy, Alembic migrations, Flask-Login authentication, and full Blog Post CRUD functionality with Flask-WTF validation.
     </p>
 
     <div class="status-indicator">
         <span class="status-dot"></span>
-        <span>App Status: <strong>Online &amp; Secure</strong></span>
+        <span>App Status: <strong>Online &amp; Operational</strong></span>
     </div>
 
     <div class="actions">
+        <a href="{{ url_for('blog.index') }}" class="btn btn-primary">
+            📰 Explore Blog
+        </a>
         {% if current_user.is_authenticated %}
-            <a href="{{ url_for('auth.dashboard') }}" class="btn btn-primary">
-                Open User Dashboard
+            <a href="{{ url_for('blog.create') }}" class="btn btn-secondary">
+                ✍️ Write New Post
             </a>
-            <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">
-                Log Out
+            <a href="{{ url_for('auth.dashboard') }}" class="btn btn-outline">
+                Dashboard
             </a>
         {% else %}
-            <a href="{{ url_for('auth.register') }}" class="btn btn-primary">
-                Get Started &bull; Register
+            <a href="{{ url_for('auth.register') }}" class="btn btn-secondary">
+                Register
             </a>
-            <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline">
                 Sign In
             </a>
         {% endif %}
@@ -41,39 +44,39 @@
     <h2 class="section-title">Core Architecture Features</h2>
     <div class="grid">
         <div class="feature-card">
-            <div class="card-icon">🏭</div>
-            <h3>Application Factory Pattern</h3>
-            <p>Configured in <code>app/__init__.py</code> using <code>create_app()</code>. Allows multiple instances and isolated unit testing.</p>
+            <div class="card-icon">📝</div>
+            <h3>Blog Post CRUD</h3>
+            <p>Complete lifecycle management: create, view, edit, and delete articles with custom slugs and timestamps.</p>
         </div>
 
         <div class="feature-card">
-            <div class="card-icon">🧩</div>
-            <h3>Flask Blueprints</h3>
-            <p>Modular routing organized into <code>app/main/</code> and <code>app/auth/</code> to keep application logic decoupled.</p>
+            <div class="card-icon">📋</div>
+            <h3>Flask-WTF &amp; Validation</h3>
+            <p>Robust server-side form validation for titles, categories, and content, reinforced with CSRF token protection.</p>
         </div>
 
         <div class="feature-card">
-            <div class="card-icon">🗄️</div>
-            <h3>Flask-SQLAlchemy</h3>
-            <p>Configured with SQLite in <code>config.py</code> and initialized in <code>app/extensions.py</code> without circular imports.</p>
+            <div class="card-icon">🏷️</div>
+            <h3>Categories &amp; Tags</h3>
+            <p>Relational architecture with One-to-Many Categories and Many-to-Many Tags for structured taxonomy and filtering.</p>
         </div>
 
         <div class="feature-card">
-            <div class="card-icon">🔄</div>
-            <h3>Flask-Migrate</h3>
-            <p>Alembic-powered database schema migrations for versioning and non-destructive SQLite alterations.</p>
+            <div class="card-icon">✨</div>
+            <h3>Rich Text Editor</h3>
+            <p>Integrated Quill.js WYSIWYG editor supporting headings, code blocks, lists, quotes, and clean styling.</p>
         </div>
 
         <div class="feature-card">
             <div class="card-icon">🔐</div>
-            <h3>Flask-Login Session Auth</h3>
-            <p>Full session management with <code>login_user()</code>, <code>logout_user()</code>, <code>UserMixin</code>, and <code>@login_required</code>.</p>
+            <h3>Flask-Login &amp; Author Security</h3>
+            <p>Protected routes with <code>@login_required</code> and strict author verification preventing unauthorized edits or deletions.</p>
         </div>
 
         <div class="feature-card">
-            <div class="card-icon">🛡️</div>
-            <h3>Secure Password Hashing</h3>
-            <p>Passwords hashed with salted Werkzeug cryptographic hashes. Duplicate usernames and emails strictly prevented.</p>
+            <div class="card-icon">🔄</div>
+            <h3>Flask-Migrate Schema Evolution</h3>
+            <p>Alembic-powered non-destructive database migrations preserving all user accounts and relational integrity.</p>
         </div>
     </div>
 </section>

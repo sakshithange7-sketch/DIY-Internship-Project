@@ -15,6 +15,7 @@
         </div>
         <div class="dashboard-actions">
             <a href="{{ url_for('blog.create') }}" class="btn btn-primary">✍️ New Post</a>
+            <a href="{{ url_for('main.user_profile', username=user.username) }}" class="btn btn-outline">👤 Public Profile</a>
             <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger">Log Out</a>
         </div>
     </div>
@@ -44,6 +45,14 @@
                 <div class="detail-row">
                     <span class="detail-label">Total Articles Authored</span>
                     <span class="detail-value text-primary"><strong>{{ user.posts.count() }} posts</strong></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Public Profile Page</span>
+                    <span class="detail-value">
+                        <a href="{{ url_for('main.user_profile', username=user.username) }}" class="link-profile">
+                            /user/{{ user.username }} &rarr;
+                        </a>
+                    </span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Flask-Login is_authenticated</span>

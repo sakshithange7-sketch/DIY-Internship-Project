@@ -1533,3 +1533,435 @@ body {
         align-items: flex-start;
     }
 }
+
+/* =========================================================
+   Task 4: Frontend – Displaying Posts, Profile & Pagination
+   ========================================================= */
+
+/* Home Posts Section */
+.home-posts-section {
+    margin-bottom: 3rem;
+}
+
+.section-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.section-title-left {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.section-subtitle {
+    font-size: 0.95rem;
+    color: #6b7280;
+}
+
+.section-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* Author Info Link inside Cards */
+.author-info-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 6px;
+    transition: opacity 0.15s ease;
+}
+
+.author-info-link:hover .author-name {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+.author-info-link:hover .author-avatar-sm {
+    transform: scale(1.08);
+    transition: transform 0.15s ease;
+}
+
+/* Author Card Link in Post Detail */
+.article-author-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    transition: opacity 0.15s ease;
+}
+
+.article-author-card-link:hover .author-name {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+.article-author-card-link:hover .author-avatar-med {
+    transform: scale(1.05);
+    transition: transform 0.15s ease;
+}
+
+/* Article Author Bio Card (End of Article) */
+.article-author-bio-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin: 2.5rem 0 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.bio-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+}
+
+.bio-details {
+    flex-grow: 1;
+}
+
+.bio-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #2563eb;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.bio-username {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.bio-username a {
+    color: #0f172a;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.bio-username a:hover {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+.bio-meta {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 0.75rem;
+}
+
+.bio-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* User Public Profile Page */
+.profile-container {
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+.profile-header-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 2.25rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+}
+
+.profile-avatar-large {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.75rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.25);
+}
+
+.profile-info {
+    flex-grow: 1;
+}
+
+.profile-badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.profile-username {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
+
+.profile-meta {
+    font-size: 0.95rem;
+    color: #475569;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.meta-separator {
+    color: #94a3b8;
+}
+
+.profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.user-profile-posts-section {
+    margin-bottom: 3rem;
+}
+
+.card-action-links {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.btn-action-edit-sm {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    background: #f1f5f9;
+    text-decoration: none;
+    border: 1px solid #cbd5e1;
+    transition: all 0.15s ease;
+}
+
+.btn-action-edit-sm:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+    border-color: #94a3b8;
+}
+
+/* Pagination Component */
+.pagination-wrapper {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.pagination-summary {
+    font-size: 0.9rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+.pagination-page-indicator {
+    color: #9ca3af;
+    margin-left: 0.25rem;
+}
+
+.pagination-nav {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 0.35rem;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.page-item {
+    display: inline-flex;
+}
+
+.page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.page-link:hover:not(.disabled):not(.current-page) {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #93c5fd;
+    transform: translateY(-1px);
+}
+
+.page-link.current-page {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+    cursor: default;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
+}
+
+.page-link.prev-btn,
+.page-link.next-btn {
+    padding: 0 1rem;
+    font-weight: 600;
+}
+
+.page-link.disabled {
+    color: #9ca3af;
+    background: #f9fafb;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.page-link.ellipsis {
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+    min-width: 24px;
+    cursor: default;
+}
+
+/* Error Pages */
+.error-container {
+    max-width: 600px;
+    margin: 3.5rem auto;
+    text-align: center;
+}
+
+.error-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.error-badge {
+    display: inline-block;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #2563eb;
+    background: #eff6ff;
+    border-radius: 9999px;
+    margin-bottom: 1rem;
+}
+
+.error-badge-danger {
+    color: #dc2626;
+    background: #fef2f2;
+}
+
+.error-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 0.75rem;
+}
+
+.error-message {
+    font-size: 1.05rem;
+    color: #4b5563;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.error-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* Responsive adjustments for Task 4 */
+@media (max-width: 768px) {
+    .profile-header-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.75rem;
+    }
+
+    .profile-badges {
+        justify-content: center;
+    }
+
+    .profile-meta {
+        justify-content: center;
+    }
+
+    .profile-actions {
+        align-items: center;
+        width: 100%;
+    }
+
+    .article-author-bio-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .bio-actions {
+        justify-content: center;
+    }
+
+    .pagination-wrapper {
+        gap: 0.75rem;
+    }
+
+    .page-link {
+        min-width: 34px;
+        height: 34px;
+        padding: 0 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .page-link.prev-btn,
+    .page-link.next-btn {
+        padding: 0 0.75rem;
+    }
+}
+

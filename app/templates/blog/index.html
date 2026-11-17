@@ -5,7 +5,7 @@
 {% block content %}
 <div class="blog-header-section">
     <div class="blog-header-content">
-        <div class="badge">DIY Internship &bull; Task 3 Blog System</div>
+        <div class="badge">DIY Internship &bull; Task 4 Active</div>
         <h1 class="hero-title">Engineering &amp; Insights Blog</h1>
         <p class="hero-description">
             Explore articles, guides, and technical insights published by our community.
@@ -29,7 +29,7 @@
     <div class="category-pills">
         <a href="{{ url_for('blog.index') }}"
            class="pill {% if not selected_category and not selected_tag %}pill-active{% endif %}">
-            All Posts ({{ posts|length if not selected_category and not selected_tag else 'All' }})
+            All Posts ({{ pagination.total if pagination else posts|length }})
         </a>
         {% for cat in categories %}
             <a href="{{ url_for('blog.index', category=cat.slug) }}"
@@ -68,7 +68,9 @@
         {% for post in posts %}
             <article class="post-card">
                 <div class="post-card-header">
-                    <span class="category-tag">{{ post.category.name }}</span>
+                    <a href="{{ url_for('blog.index', category=post.category.slug) }}" class="category-tag">
+                        🏷️ {{ post.category.name }}
+                    </a>
                     <span class="post-date">{{ post.created_at.strftime('%b %d, %Y') }}</span>
                 </div>
 
@@ -91,17 +93,19 @@
                 {% endif %}
 
                 <div class="post-card-footer">
-                    <div class="author-info">
-                        <div class="author-avatar-sm">
-                            {{ post.author.username[0]|upper }}
+                    <a href="{{ url_for('main.user_profile', username=post.author.username) }}" class="author-info-link" title="View {{ post.author.username }}'s profile">
+                        <div class="author-info">
+                            <div class="author-avatar-sm">
+                                {{ post.author.username[0]|upper }}
+                            </div>
+                            <div class="author-meta">
+                                <span class="author-name">{{ post.author.username }}</span>
+                                {% if post.updated_at > post.created_at %}
+                                    <span class="updated-flag">Updated</span>
+                                {% endif %}
+                            </div>
                         </div>
-                        <div class="author-meta">
-                            <span class="author-name">{{ post.author.username }}</span>
-                            {% if post.updated_at > post.created_at %}
-                                <span class="updated-flag">Updated</span>
-                            {% endif %}
-                        </div>
-                    </div>
+                    </a>
 
                     <a href="{{ url_for('blog.detail', slug=post.slug) }}" class="btn-read-more">
                         Read Article &rarr;
@@ -110,6 +114,10 @@
             </article>
         {% endfor %}
     </div>
+
+    {% if pagination and pagination.pages > 1 %}
+        {% include '_pagination.html' %}
+    {% endif %}
 {% else %}
     <div class="empty-state">
         <div class="empty-icon">📝</div>

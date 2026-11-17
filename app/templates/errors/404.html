@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ error_title or '404 - Not Found' }} - FlaskStarter{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-card">
+        <div class="error-badge">404 Error</div>
+        <h1 class="error-title">{{ error_title or 'Page Not Found' }}</h1>
+        <p class="error-message">
+            {{ error_message or 'The page or resource you are looking for does not exist, has been moved, or is temporarily unavailable.' }}
+        </p>
+
+        <div class="error-actions">
+            <a href="{{ url_for('main.index') }}" class="btn btn-primary">
+                🏠 Back to Home
+            </a>
+            <a href="{{ url_for('blog.index') }}" class="btn btn-secondary">
+                📰 Browse Blog
+            </a>
+            <a href="{{ url_for('main.health_check') }}" class="btn btn-outline" target="_blank">
+                Health Check
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

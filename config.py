@@ -25,6 +25,7 @@ class TestingConfig(Config):
     """Testing environment configuration."""
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    WTF_CSRF_ENABLED = False
 
 
 class ProductionConfig(Config):

@@ -37,6 +37,17 @@ def create_app(config_name=None):
         from app.models.user import User
         return db.session.get(User, int(user_id))
 
+    # Global context processor for pagination URLs preserving query and route arguments
+    @app.context_processor
+    def utility_processor():
+        def url_for_page(page):
+            from flask import request, url_for
+            args = request.view_args.copy() if request.view_args else {}
+            args.update(request.args.to_dict())
+            args['page'] = page
+            return url_for(request.endpoint, **args)
+        return dict(url_for_page=url_for_page)
+
     # Import models so Flask-Migrate and SQLAlchemy register them
     from app import models
 

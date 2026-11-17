@@ -83,12 +83,21 @@ def index():
             (Post.title.ilike(search_filter)) | (Post.content.ilike(search_filter))
         )
 
-    posts = query.order_by(Post.created_at.desc()).all()
+    page = request.args.get('page', 1, type=int)
+    if not page or page < 1:
+        page = 1
+    per_page = 5
+
+    pagination = query.order_by(Post.created_at.desc(), Post.id.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
+    posts = pagination.items
     categories = Category.query.order_by(Category.name.asc()).all()
 
     return render_template(
         'blog/index.html',
         posts=posts,
+        pagination=pagination,
         categories=categories,
         selected_category=selected_category,
         selected_tag=selected_tag,

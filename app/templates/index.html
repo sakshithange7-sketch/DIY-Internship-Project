@@ -4,20 +4,35 @@
 
 {% block content %}
 <section class="hero-section">
-    <div class="badge">DIY Internship &bull; Task 1</div>
-    <h1 class="hero-title">Flask Application Setup</h1>
+    <div class="badge">DIY Internship &bull; Task 1 &amp; Task 2</div>
+    <h1 class="hero-title">Flask Application &amp; Authentication</h1>
     <p class="hero-description">
-        A clean, modular starter architecture using the Application Factory pattern, Blueprints, Flask-SQLAlchemy, and Flask-Migrate.
+        A modular starter architecture built with the Application Factory pattern, Blueprints, Flask-SQLAlchemy, Flask-Migrate, and secure user authentication via Flask-Login.
     </p>
 
     <div class="status-indicator">
         <span class="status-dot"></span>
-        <span>App Status: <strong>Online & Ready</strong></span>
+        <span>App Status: <strong>Online &amp; Secure</strong></span>
     </div>
 
     <div class="actions">
-        <a href="{{ url_for('main.health_check') }}" class="btn btn-primary" target="_blank">
-            Test Health Check Endpoint (/health)
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('auth.dashboard') }}" class="btn btn-primary">
+                Open User Dashboard
+            </a>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">
+                Log Out
+            </a>
+        {% else %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary">
+                Get Started &bull; Register
+            </a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">
+                Sign In
+            </a>
+        {% endif %}
+        <a href="{{ url_for('main.health_check') }}" class="btn btn-outline" target="_blank">
+            Health Check (/health)
         </a>
     </div>
 </section>
@@ -34,7 +49,7 @@
         <div class="feature-card">
             <div class="card-icon">🧩</div>
             <h3>Flask Blueprints</h3>
-            <p>Modular routing organized inside <code>app/main/</code> to keep application logic decoupled and clean.</p>
+            <p>Modular routing organized into <code>app/main/</code> and <code>app/auth/</code> to keep application logic decoupled.</p>
         </div>
 
         <div class="feature-card">
@@ -46,7 +61,19 @@
         <div class="feature-card">
             <div class="card-icon">🔄</div>
             <h3>Flask-Migrate</h3>
-            <p>Alembic-powered database schema migrations for smooth versioning of SQLite tables.</p>
+            <p>Alembic-powered database schema migrations for versioning and non-destructive SQLite alterations.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="card-icon">🔐</div>
+            <h3>Flask-Login Session Auth</h3>
+            <p>Full session management with <code>login_user()</code>, <code>logout_user()</code>, <code>UserMixin</code>, and <code>@login_required</code>.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="card-icon">🛡️</div>
+            <h3>Secure Password Hashing</h3>
+            <p>Passwords hashed with salted Werkzeug cryptographic hashes. Duplicate usernames and emails strictly prevented.</p>
         </div>
     </div>
 </section>

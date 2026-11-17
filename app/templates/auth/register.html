@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - FlaskStarter{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">📝</div>
+            <h1 class="auth-title">Create Account</h1>
+            <p class="auth-subtitle">Join us and start managing your sessions</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.register') }}" class="auth-form" novalidate>
+            <div class="form-group">
+                <label for="username" class="form-label">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    class="form-control"
+                    placeholder="Choose a unique username"
+                    value="{{ username if username else '' }}"
+                    required
+                    autofocus
+                >
+                <small class="form-hint">At least 3 characters. Letters, numbers, and underscores.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-control"
+                    placeholder="you@example.com"
+                    value="{{ email if email else '' }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="form-control"
+                    placeholder="Create a strong password"
+                    required
+                >
+                <small class="form-hint">Must be at least 6 characters long.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password" class="form-label">Confirm Password</label>
+                <input
+                    type="password"
+                    id="confirm_password"
+                    name="confirm_password"
+                    class="form-control"
+                    placeholder="Re-enter your password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Register Account</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{{ url_for('auth.login') }}">Sign in here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
